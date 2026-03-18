@@ -1,36 +1,23 @@
-<div align="center">
-
-# DTP: Low-Light Image Super-Resolution
-
-### Official PyTorch implementation of our ICME 2026 paper
-
-[![Conference](https://img.shields.io/badge/Accepted%20by-ICME%202026-ff6b6b?style=flat-square)](#)
-[![Status](https://img.shields.io/badge/Status-Code%20Release-2ea44f?style=flat-square)](#)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square)](#)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?style=flat-square)](#)
-[![Framework](https://img.shields.io/badge/Framework-Figure%20PDF-1f6feb?style=flat-square)](assets/framework.pdf)
-
-<p>
-Code-only public release of the core DTP framework for low-light image super-resolution.
-</p>
-
-<p>
-Pretrained weights, datasets, benchmark outputs, and private experimental artifacts are intentionally excluded from this repository.
-</p>
-
-<p>
-  <a href="#-news">News</a> |
-  <a href="#-overview">Overview</a> |
-  <a href="#-framework">Framework</a> |
-  <a href="#-installation">Installation</a> |
-  <a href="#-training">Training</a> |
-  <a href="#-inference">Inference</a> |
-  <a href="#-citation">Citation</a>
-</p>
-
-</div>
+# Dual-Path Learning based on Frequency Structural Decoupling and Regional-Aware Fusion for Low-Light Image Super-Resolution
 
 ---
+
+### :tada: Accepted by ICME 2026 :tada:
+
+> **Dual-Path Learning based on Frequency Structural Decoupling and Regional-Aware Fusion for Low-Light Image Super-Resolution**  
+> Ji-Xuan He<sup>1,*</sup>, Jia-Cheng Zhao<sup>1,*</sup>, Feng-Qi Cui<sup>2,&dagger;</sup>, Jinyang Huang<sup>1,&dagger;</sup>, Yang Liu<sup>3</sup>, Sirui Zhao<sup>2</sup>, Meng Li<sup>1</sup>, Zhi Liu<sup>4</sup>
+>
+> <sup>1</sup>Hefei University of Technology, Hefei, China  
+> <sup>2</sup>University of Science and Technology of China, Hefei, China  
+> <sup>3</sup>Zhejiang University, Hangzhou, China  
+> <sup>4</sup>The University of Electro-Communications, Tokyo, Japan
+>
+> <sup>*</sup>Equal contribution. <sup>&dagger;</sup>Corresponding authors.  
+> Correspondence to: `jixuanhe@mail.hfut.edu.cn`, `hjy@hfut.edu.cn`
+
+Official PyTorch implementation of **DTP**. This repository is the cleaned public code release and intentionally excludes pretrained weights, datasets, benchmark outputs, and private experimental artifacts.
+
+[Framework Figure](assets/framework.pdf) [Training Code](scripts/train.py) [Inference Code](scripts/infer.py)
 
 ## :tada: News
 
