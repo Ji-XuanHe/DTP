@@ -1,47 +1,76 @@
 # DTP: Low-Light Image Super-Resolution
 
-This repository contains the cleaned open-source release of the core DTP model for low-light image super-resolution. The released code keeps the main training and inference pipeline used in our ICME 2026 paper while intentionally excluding pretrained weights, datasets, baselines, web demos, ablation folders, and qualitative result dumps.
+Official PyTorch implementation of **DTP**, a four-stage low-light image super-resolution framework.
 
-## What Is Included
+> Accepted by **IEEE International Conference on Multimedia and Expo (ICME 2026)**.
 
-- `dtp/`: core package with the decomposition, enhancement, denoising, and super-resolution modules
-- `scripts/train.py`: joint training entry point for the four-stage pipeline
-- `scripts/infer.py`: lightweight inference script for single images or folders
-- `requirements.txt`: minimal Python dependencies
+This repository is the cleaned public release of our core model code. It keeps the main training and inference pipeline used in the paper while intentionally excluding pretrained weights, datasets, baselines, web demos, ablation folders, and qualitative result dumps.
 
-## What Is Not Included
+## Highlights
 
-- pretrained checkpoints
-- RELLISUR dataset files
-- test outputs, report folders, and visualization dumps
-- baselines, ablation studies, and UI code
+- Four-stage pipeline: **decomposition -> enhancement -> denoising -> super-resolution**
+- Modular PyTorch implementation for training and inference
+- Compatible with the original four-branch checkpoint format
+- Clean open-source release without private experimental artifacts
 
 ## Method Overview
 
-DTP follows a four-stage pipeline:
+Given a low-light low-resolution input, DTP first separates illumination-dominant and detail-dominant information, then processes the two branches with dedicated enhancement and denoising modules, and finally reconstructs the high-resolution result through frequency-aware fusion.
 
-1. `DecomposeNet`: decomposes the low-light input into high-frequency detail and low-frequency illumination components.
-2. `EnhanceNet`: enhances the low-frequency branch with an adaptive Naka-Rushton transform and a U-Net style decoder.
-3. `DenoiseNet`: denoises the high-frequency branch.
-4. `LLSRNet`: fuses the original input, denoised detail, and enhanced illumination for super-resolution reconstruction.
+The released pipeline includes:
 
-## Repository Layout
+1. `DecomposeNet`
+   Separates the input into high-frequency detail and low-frequency illumination components with multi-scale Haar wavelet decomposition and frequency attention.
+2. `EnhanceNet`
+   Enhances the low-frequency branch with an adaptive Naka-Rushton transform and a U-Net style architecture.
+3. `DenoiseNet`
+   Suppresses noise in the high-frequency branch.
+4. `LLSRNet`
+   Fuses the original input, denoised detail, and enhanced illumination for final super-resolution reconstruction.
+
+## Repository Structure
 
 ```text
 .
 |-- dtp
 |   |-- data
+|   |   `-- rellisur.py
 |   |-- models
+|   |   |-- decomposition.py
+|   |   |-- enhancement.py
+|   |   |-- denoising.py
+|   |   |-- sr.py
+|   |   `-- pipeline.py
 |   |-- utils
 |   `-- losses.py
 |-- scripts
-|   |-- infer.py
-|   `-- train.py
+|   |-- train.py
+|   `-- infer.py
 |-- requirements.txt
 `-- README.md
 ```
 
-## Environment
+## Release Scope
+
+This repository only contains the code required to understand, train, and run the model.
+
+Included:
+
+- model definitions
+- loss functions
+- dataset loader
+- training script
+- inference script
+
+Not included:
+
+- pretrained checkpoints
+- RELLISUR dataset files
+- benchmark outputs and visual results
+- baselines and ablation code
+- web UI and internal tooling
+
+## Installation
 
 ```bash
 python -m venv .venv
@@ -49,11 +78,17 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Tested with Python 3.10+, PyTorch 2.x, and CUDA-capable GPUs. CPU inference is supported, but training is expected to run on GPU.
+Recommended environment:
 
-## Dataset Layout
+- Python 3.10+
+- PyTorch 2.x
+- CUDA-capable GPU for training
 
-The training script expects the RELLISUR dataset in the following structure:
+CPU inference is supported, but training is expected to run on GPU.
+
+## Dataset Preparation
+
+The training script is written for the **RELLISUR** dataset layout:
 
 ```text
 RELLISUR/RELLISUR-Dataset/
@@ -77,14 +112,16 @@ RELLISUR/RELLISUR-Dataset/
         `-- X4
 ```
 
-The released dataset loader assumes:
+Dataset naming assumptions in the released loader:
 
-- low-light filenames begin with a five-digit image id
-- the ground-truth filename is `<first-five-digits><suffix>`
-- `X1` is the normal-light low-resolution target
+- each low-light filename starts with a five-digit image id
+- the ground-truth filename is reconstructed as `<first-five-digits><suffix>`
+- `X1` is the normal-light low-resolution supervision
 - `X2` or `X4` is the super-resolution target
 
 ## Training
+
+Example for `x2` super-resolution:
 
 ```bash
 python scripts/train.py \
@@ -100,15 +137,19 @@ python scripts/train.py \
   --output-dir checkpoints/dtp_x2
 ```
 
-Key points:
+Notes:
 
-- the checkpoint format remains compatible with the original four-key release format:
-  - `La_net`
-  - `DES_net`
-  - `decom_net`
-  - `sr_net`
 - validation is optional
-- the training loss follows the original weighted multi-branch objective
+- the released training script preserves the original joint optimization strategy
+- the decomposition, enhancement, denoising, and SR branches are optimized separately
+- checkpoints are saved in a format compatible with the original codebase
+
+Checkpoint keys:
+
+- `La_net`
+- `DES_net`
+- `decom_net`
+- `sr_net`
 
 ## Inference
 
@@ -131,20 +172,34 @@ python scripts/infer.py \
   --save-branches
 ```
 
-Optional intermediate outputs:
+When `--save-branches` is enabled, the script also exports:
 
 - `high_freq`
 - `low_freq`
 - `enhanced_low`
 - `denoised_high`
-- final SR result
+- final SR output
 
-## Notes For Release
+## Open-Source Notes
 
-- This repository is a code-only release.
-- Pretrained weights and benchmark results are intentionally omitted.
-- If you want to publish checkpoints later, the current `DTPModel.load_checkpoint()` method is already compatible with the legacy checkpoint key names.
+- This is a **code-only** release.
+- Pretrained weights are intentionally not included in the current public version.
+- Test-time visual results and benchmark dumps are also excluded.
+- The `DTPModel.load_checkpoint()` interface already supports the legacy checkpoint structure if weights are released later.
 
 ## Citation
 
-The BibTeX entry will be added after the final publication metadata is available.
+If you find this repository useful, please cite our ICME 2026 paper. The final BibTeX entry will be added after the official publication metadata is available.
+
+```bibtex
+@inproceedings{dtp_icme2026,
+  title     = {To appear},
+  author    = {To appear},
+  booktitle = {IEEE International Conference on Multimedia and Expo (ICME)},
+  year      = {2026}
+}
+```
+
+## Contact
+
+For questions regarding the paper or the release, please open an issue in this repository.
