@@ -29,9 +29,9 @@ Official PyTorch implementation of **DTP**. This repository is the cleaned publi
 
 ## :sparkles: Overview
 
-DTP is a four-stage low-light image super-resolution framework designed to reconstruct high-quality normal-light high-resolution images from low-light low-resolution inputs.
+DTP is a three-stage low-light image super-resolution framework designed to reconstruct high-quality normal-light high-resolution images from low-light low-resolution inputs.
 
-The model follows a decomposition-driven design:
+The model follows a three-stage decomposition-driven design:
 
 1. **FSD** (`Frequency-aware Structural Decoupling`) separates the input into low-frequency luminance and high-frequency texture components.
 2. **SDR** (`Semantics-specific Dual-path Representation`) contains two dedicated branches:
