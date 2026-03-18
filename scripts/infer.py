@@ -14,7 +14,7 @@ from dtp.utils import ensure_dir, list_images, read_image, write_image
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run DTP inference on an image or a folder.")
+    parser = argparse.ArgumentParser(description="Run DTP inference with FSD, SDR, and CSR outputs.")
     parser.add_argument("--checkpoint", required=True, type=str)
     parser.add_argument("--input", required=True, type=str)
     parser.add_argument("--output", required=True, type=str)
@@ -42,10 +42,10 @@ def resolve_output_path(input_root: Path, input_path: Path, output_root: Path) -
 def save_branches(outputs: dict[str, torch.Tensor], output_path: Path) -> None:
     branch_dir = output_path.parent / f"{output_path.stem}_branches"
     ensure_dir(branch_dir)
-    write_image(outputs["high_freq"], branch_dir / "high_freq.png")
-    write_image(outputs["low_freq"], branch_dir / "low_freq.png")
-    write_image(outputs["enhanced_low"], branch_dir / "enhanced_low.png")
-    write_image(outputs["denoised_high"], branch_dir / "denoised_high.png")
+    write_image(outputs["luminance_llr"], branch_dir / "luminance_llr.png")
+    write_image(outputs["texture_llr"], branch_dir / "texture_llr.png")
+    write_image(outputs["luminance_hlr"], branch_dir / "luminance_hlr.png")
+    write_image(outputs["texture_dlr"], branch_dir / "texture_dlr.png")
 
 
 def main() -> None:
@@ -69,7 +69,7 @@ def main() -> None:
             image = read_image(image_path).unsqueeze(0).to(device)
             outputs = model(image)
             output_path = resolve_output_path(input_root, image_path, output_root)
-            write_image(outputs["sr"], output_path)
+            write_image(outputs["restored_hsr"], output_path)
             if args.save_branches:
                 save_branches(outputs, output_path)
 

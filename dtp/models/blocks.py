@@ -54,14 +54,14 @@ class FrequencyAwareModule(nn.Module):
 
     def forward(
         self,
-        high_freq: torch.Tensor,
-        low_freq: torch.Tensor,
+        texture_features: torch.Tensor,
+        luminance_features: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        high_freq = self.channel_attention(high_freq) * high_freq
-        low_freq = self.channel_attention(low_freq) * low_freq
-        high_freq = self.spatial_attention(high_freq) * high_freq
-        low_freq = self.spatial_attention(low_freq) * low_freq
-        return high_freq, low_freq
+        texture_features = self.channel_attention(texture_features) * texture_features
+        luminance_features = self.channel_attention(luminance_features) * luminance_features
+        texture_features = self.spatial_attention(texture_features) * texture_features
+        luminance_features = self.spatial_attention(luminance_features) * luminance_features
+        return texture_features, luminance_features
 
 
 class AdaptiveFusion(nn.Module):
@@ -77,14 +77,14 @@ class AdaptiveFusion(nn.Module):
     def forward(
         self,
         original: torch.Tensor,
-        high_freq: torch.Tensor,
-        low_freq: torch.Tensor,
+        texture_features: torch.Tensor,
+        luminance_features: torch.Tensor,
     ) -> torch.Tensor:
-        weights = self.attention(torch.cat([original, high_freq, low_freq], dim=1))
+        weights = self.attention(torch.cat([original, texture_features, luminance_features], dim=1))
         return (
             weights[:, [0], :, :] * original
-            + weights[:, [1], :, :] * high_freq
-            + weights[:, [2], :, :] * low_freq
+            + weights[:, [1], :, :] * texture_features
+            + weights[:, [2], :, :] * luminance_features
         )
 
 

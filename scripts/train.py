@@ -25,7 +25,7 @@ from dtp.utils import batch_psnr, batch_ssim, ensure_dir, setup_logger
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Train DTP for low-light super-resolution.")
+    parser = argparse.ArgumentParser(description="Train DTP with FSD, SDR, and CSR modules.")
     parser.add_argument("--train-lowlight-dir", required=True, type=str)
     parser.add_argument("--train-gt-dir", required=True, type=str)
     parser.add_argument("--train-low-gt-dir", required=True, type=str)
@@ -47,13 +47,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--accumulation-steps", type=int, default=1)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--grad-clip", type=float, default=0.0)
-    parser.add_argument("--enhance-lr", type=float, default=2e-4)
-    parser.add_argument("--decompose-lr", type=float, default=2e-4)
-    parser.add_argument("--denoise-lr", type=float, default=1e-4)
-    parser.add_argument("--sr-lr", type=float, default=1e-4)
+    parser.add_argument("--sdr-luminance-lr", "--enhance-lr", dest="sdr_luminance_lr", type=float, default=2e-4)
+    parser.add_argument("--fsd-lr", "--decompose-lr", dest="fsd_lr", type=float, default=2e-4)
+    parser.add_argument("--sdr-texture-lr", "--denoise-lr", dest="sdr_texture_lr", type=float, default=1e-4)
+    parser.add_argument("--csr-lr", "--sr-lr", dest="csr_lr", type=float, default=1e-4)
     parser.add_argument("--scheduler-start-epoch", type=int, default=50)
-    parser.add_argument("--enhance-perceptual-weight", type=float, default=0.1)
-    parser.add_argument("--sr-vgg-weight", type=float, default=0.1)
+    parser.add_argument("--sdr-luminance-perceptual-weight", "--enhance-perceptual-weight", dest="sdr_luminance_perceptual_weight", type=float, default=0.1)
+    parser.add_argument("--csr-vgg-weight", "--sr-vgg-weight", dest="csr_vgg_weight", type=float, default=0.1)
     return parser.parse_args()
 
 
@@ -72,25 +72,25 @@ def seed_everything(seed: int) -> None:
 
 def create_optimizers(model: torch.nn.Module, args: argparse.Namespace) -> dict[str, torch.optim.Optimizer]:
     return {
-        "enhancer": torch.optim.AdamW(
-            model.enhancer.parameters(),
-            lr=args.enhance_lr,
+        "sdr_luminance": torch.optim.AdamW(
+            model.luminance_enhancer.parameters(),
+            lr=args.sdr_luminance_lr,
             weight_decay=args.weight_decay,
             betas=(0.9, 0.999),
         ),
-        "denoiser": torch.optim.Adam(
-            model.denoiser.parameters(),
-            lr=args.denoise_lr,
+        "sdr_texture": torch.optim.Adam(
+            model.texture_denoiser.parameters(),
+            lr=args.sdr_texture_lr,
             weight_decay=args.weight_decay,
         ),
-        "decomposer": torch.optim.Adam(
-            model.decomposer.parameters(),
-            lr=args.decompose_lr,
+        "fsd": torch.optim.Adam(
+            model.fsd.parameters(),
+            lr=args.fsd_lr,
             weight_decay=args.weight_decay,
         ),
-        "sr": torch.optim.Adam(
-            model.super_resolver.parameters(),
-            lr=args.sr_lr,
+        "csr": torch.optim.Adam(
+            model.csr.parameters(),
+            lr=args.csr_lr,
             weight_decay=args.weight_decay,
         ),
     }
@@ -132,10 +132,20 @@ def validate(model: torch.nn.Module, loader: DataLoader, device: torch.device) -
     for lowlight, ground_truth, _ in tqdm(loader, desc="Validate", leave=False):
         lowlight = lowlight.to(device)
         ground_truth = ground_truth.to(device)
-        prediction = model(lowlight)["sr"]
+        prediction = model(lowlight)["restored_hsr"]
         psnr_scores.append(batch_psnr(prediction, ground_truth))
         ssim_scores.append(batch_ssim(prediction, ground_truth))
     return float(np.mean(psnr_scores)), float(np.mean(ssim_scores))
+
+
+def remap_training_state(name: str) -> str:
+    legacy_mapping = {
+        "enhancer": "sdr_luminance",
+        "denoiser": "sdr_texture",
+        "decomposer": "fsd",
+        "sr": "csr",
+    }
+    return legacy_mapping.get(name, name)
 
 
 def main() -> None:
@@ -190,8 +200,8 @@ def main() -> None:
     tv_loss = TotalVariationLoss()
     low_tv_loss = LowFrequencyTVLoss()
     frequency_loss = FrequencyConsistencyLoss().to(device)
-    enhance_loss = EnhanceLoss(perception_weight=args.enhance_perceptual_weight).to(device)
-    sr_loss = LLSRLoss(vgg_loss_weight=args.sr_vgg_weight).to(device)
+    sdr_luminance_loss = EnhanceLoss(perception_weight=args.sdr_luminance_perceptual_weight).to(device)
+    csr_loss = LLSRLoss(vgg_loss_weight=args.csr_vgg_weight).to(device)
 
     start_epoch = 0
     best_psnr = float("-inf")
@@ -201,11 +211,13 @@ def main() -> None:
         checkpoint = model.load_checkpoint(args.resume)
         start_epoch = int(checkpoint.get("epoch", -1)) + 1
         for name, optimizer_state in checkpoint.get("optimizers", {}).items():
-            if name in optimizers:
-                optimizers[name].load_state_dict(optimizer_state)
+            mapped_name = remap_training_state(name)
+            if mapped_name in optimizers:
+                optimizers[mapped_name].load_state_dict(optimizer_state)
         for name, scheduler_state in checkpoint.get("schedulers", {}).items():
-            if name in schedulers:
-                schedulers[name].load_state_dict(scheduler_state)
+            mapped_name = remap_training_state(name)
+            if mapped_name in schedulers:
+                schedulers[mapped_name].load_state_dict(scheduler_state)
 
     for optimizer in optimizers.values():
         optimizer.zero_grad(set_to_none=True)
@@ -222,30 +234,29 @@ def main() -> None:
             ground_truth = ground_truth.to(device)
             low_ground_truth = low_ground_truth.to(device)
 
-            lowlight_high, lowlight_low = model.decomposer(lowlight)
-            gt_high, gt_low = model.decomposer(low_ground_truth)
+            luminance_llr, texture_llr = model.fsd(lowlight)
+            gt_luminance, gt_texture = model.fsd(low_ground_truth)
 
-            enhanced_low = model.enhancer(lowlight_low)
-            denoised_high = model.denoiser(lowlight_high.detach())
+            luminance_hlr, texture_dlr = model.sdr(luminance_llr, texture_llr.detach())
 
-            reconstruction_loss = mse_loss(gt_high + gt_low, low_ground_truth) + mse_loss(
-                lowlight_high + lowlight_low,
+            reconstruction_loss = mse_loss(gt_texture + gt_luminance, low_ground_truth) + mse_loss(
+                texture_llr + luminance_llr,
                 lowlight,
             )
-            decomposition_loss = (
+            fsd_loss = (
                 100.0 * reconstruction_loss
-                + 2.0 * (mse_loss(lowlight_low, lowlight) + mse_loss(gt_low, low_ground_truth))
-                + low_tv_loss(lowlight_low)
-                + tv_loss(gt_low)
-                + 0.1 * frequency_loss(lowlight_high + lowlight_low, lowlight_high, lowlight_low)
+                + 2.0 * (mse_loss(luminance_llr, lowlight) + mse_loss(gt_luminance, low_ground_truth))
+                + low_tv_loss(luminance_llr)
+                + tv_loss(gt_luminance)
+                + 0.1 * frequency_loss(texture_llr + luminance_llr, texture_llr, luminance_llr)
             )
-            branch_enhance_loss = enhance_loss(enhanced_low, gt_low.detach(), lowlight_low)
-            branch_denoise_loss = l1_loss(denoised_high, gt_high.detach())
+            sdr_luminance_branch_loss = sdr_luminance_loss(luminance_hlr, gt_luminance.detach(), luminance_llr)
+            sdr_texture_branch_loss = l1_loss(texture_dlr, gt_texture.detach())
 
-            prediction = model.super_resolver(lowlight, denoised_high, enhanced_low)
-            branch_sr_loss = sr_loss(prediction, ground_truth)
+            prediction = model.csr(lowlight, texture_dlr, luminance_hlr)
+            csr_branch_loss = csr_loss(prediction, ground_truth)
 
-            total_loss = decomposition_loss + 10.0 * branch_enhance_loss + branch_denoise_loss + 5.0 * branch_sr_loss
+            total_loss = fsd_loss + 10.0 * sdr_luminance_branch_loss + sdr_texture_branch_loss + 5.0 * csr_branch_loss
             (total_loss / args.accumulation_steps).backward()
 
             if step % args.accumulation_steps == 0 or step == len(train_loader):
@@ -266,11 +277,11 @@ def main() -> None:
                     ssim=f"{np.mean(epoch_ssim):.4f}",
                 )
 
-        schedulers["decomposer"].step()
+        schedulers["fsd"].step()
         if epoch >= args.scheduler_start_epoch:
-            schedulers["enhancer"].step()
-            schedulers["denoiser"].step()
-            schedulers["sr"].step()
+            schedulers["sdr_luminance"].step()
+            schedulers["sdr_texture"].step()
+            schedulers["csr"].step()
 
         logger.info(
             "Epoch %d | loss %.6f | train PSNR %.4f | train SSIM %.4f",

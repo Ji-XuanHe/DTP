@@ -108,15 +108,15 @@ class FrequencyConsistencyLoss(nn.Module):
     def forward(
         self,
         prediction: torch.Tensor,
-        high_freq: torch.Tensor,
-        low_freq: torch.Tensor,
+        texture_llr: torch.Tensor,
+        luminance_llr: torch.Tensor,
     ) -> torch.Tensor:
         prediction_freq = torch.fft.fft2(prediction)
-        high_freq_spectrum = torch.fft.fft2(high_freq)
-        low_freq_spectrum = torch.fft.fft2(low_freq)
+        texture_spectrum = torch.fft.fft2(texture_llr)
+        luminance_spectrum = torch.fft.fft2(luminance_llr)
         return self.l1(
             torch.abs(prediction_freq),
-            torch.abs(high_freq_spectrum) + torch.abs(low_freq_spectrum),
+            torch.abs(texture_spectrum) + torch.abs(luminance_spectrum),
         )
 
 

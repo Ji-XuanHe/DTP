@@ -33,10 +33,10 @@ DTP is a four-stage low-light image super-resolution framework designed to recon
 
 The model follows a decomposition-driven design:
 
-1. **DecomposeNet** separates the input into high-frequency detail and low-frequency illumination components.
-2. **EnhanceNet** enhances the low-frequency illumination branch.
-3. **DenoiseNet** suppresses noise in the high-frequency detail branch.
-4. **LLSRNet** fuses the original input, denoised detail, and enhanced illumination to reconstruct the final high-resolution output.
+1. **FSD** (`Frequency-aware Structural Decoupling`) separates the input into low-frequency luminance and high-frequency texture components.
+2. **SDR** (`Semantics-specific Dual-path Representation`) contains two dedicated branches:
+   a bio-inspired luminance enhancer and a hierarchical texture denoiser.
+3. **CSR** (`Cross-frequency Semantic Recomposition`) fuses the original input, enhanced luminance, and restored texture to reconstruct the final high-resolution output.
 
 ## :jigsaw: Framework
 
@@ -64,10 +64,9 @@ Figure source in the LaTeX paper:
 |   |-- data
 |   |   `-- rellisur.py
 |   |-- models
-|   |   |-- decomposition.py
-|   |   |-- enhancement.py
-|   |   |-- denoising.py
-|   |   |-- sr.py
+|   |   |-- fsd.py
+|   |   |-- sdr.py
+|   |   |-- csr.py
 |   |   `-- pipeline.py
 |   |-- utils
 |   `-- losses.py
@@ -172,15 +171,18 @@ Notes:
 
 - validation is optional
 - the released training script preserves the original joint optimization strategy
-- the decomposition, enhancement, denoising, and SR branches are optimized separately
-- checkpoints are saved in a format compatible with the original codebase
+- the public code organizes optimization by `FSD`, `SDR-luminance branch`, `SDR-texture branch`, and `CSR`
+- checkpoints now follow the paper naming
 
 Checkpoint keys:
 
-- `La_net`
-- `DES_net`
-- `decom_net`
-- `sr_net`
+- `fsd`
+- `sdr`
+- `csr`
+
+Legacy checkpoint support:
+
+- the loader still reads the earlier internal format with `La_net`, `DES_net`, `decom_net`, and `sr_net`
 
 ## :mag: Inference
 
@@ -205,11 +207,11 @@ python scripts/infer.py \
 
 When `--save-branches` is enabled, the script also exports:
 
-- `high_freq`
-- `low_freq`
-- `enhanced_low`
-- `denoised_high`
-- final SR output
+- `luminance_llr`
+- `texture_llr`
+- `luminance_hlr`
+- `texture_dlr`
+- final `restored_hsr` output
 
 ## :memo: Open-Source Notes
 
