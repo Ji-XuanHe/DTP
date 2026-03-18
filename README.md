@@ -8,6 +8,7 @@
 [![Status](https://img.shields.io/badge/Status-Code%20Release-2ea44f?style=flat-square)](#)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square)](#)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?style=flat-square)](#)
+[![Framework](https://img.shields.io/badge/Framework-Figure%20PDF-1f6feb?style=flat-square)](assets/framework.pdf)
 
 <p>
 Code-only public release of the core DTP framework for low-light image super-resolution.
@@ -52,18 +53,21 @@ The model follows a decomposition-driven design:
 
 ## :jigsaw: Framework
 
-```mermaid
-flowchart LR
-    A["Low-Light Low-Resolution Input"] --> B["DecomposeNet"]
-    B --> C["High-Frequency Detail"]
-    B --> D["Low-Frequency Illumination"]
-    C --> E["DenoiseNet"]
-    D --> F["EnhanceNet"]
-    A --> G["LLSRNet"]
-    E --> G
-    F --> G
-    G --> H["Normal-Light High-Resolution Output"]
-```
+The original framework figure from the paper is shown below. Click the image to open the PDF version.
+
+<div align="center">
+  <a href="assets/framework.pdf">
+    <img src="assets/framework.png" alt="DTP framework" width="100%">
+  </a>
+</div>
+
+<div align="center">
+  <sub>Original paper figure: <a href="assets/framework.pdf">framework.pdf</a></sub>
+</div>
+
+Figure source in the LaTeX paper:
+
+- `Sec/method.tex` -> `\includegraphics[width=1.0\textwidth]{Fig/method.pdf}`
 
 ## :package: Repository Structure
 
@@ -80,6 +84,9 @@ flowchart LR
 |   |   `-- pipeline.py
 |   |-- utils
 |   `-- losses.py
+|-- assets
+|   |-- framework.png
+|   `-- framework.pdf
 |-- scripts
 |   |-- train.py
 |   `-- infer.py
