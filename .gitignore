@@ -93,3 +93,5 @@ visualize*.py
 *.tif
 *.tiff
 !ADVANCED_FEATURES_GUIDE.md
+!assets/framework.pdf
+!assets/framework.png
