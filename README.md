@@ -20,10 +20,6 @@ Ji-Xuan He<sup>1,&#42;</sup>, Jia-Cheng Zhao<sup>1,&#42;</sup>, Feng-Qi Cui<sup>
 
 <sup>&#42;</sup>Equal contribution. <sup>&dagger;</sup>Corresponding authors.
 
-Code-only public release of the core DTP framework for low-light image super-resolution.
-
-Pretrained weights, datasets, benchmark outputs, and private experimental artifacts are intentionally excluded from this repository.
-
 [ArXiv Paper](#) | [Dataset Page](https://vap.aau.dk/rellisur/) | [Dataset Download](https://doi.org/10.5281/zenodo.5234969)
 
 [News](#news) | [Overview](#overview) | [Framework](#framework) | [Installation](#installation) | [Training](#training) | [Inference](#inference) | [Citation](#citation)
