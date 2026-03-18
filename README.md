@@ -15,9 +15,9 @@
 > <sup>*</sup>Equal contribution. <sup>&dagger;</sup>Corresponding authors.  
 > Correspondence to: `jixuanhe@mail.hfut.edu.cn`, `hjy@hfut.edu.cn`
 
-Official PyTorch implementation of **DTP**. This repository is the cleaned public code release and intentionally excludes pretrained weights, datasets, benchmark outputs, and private experimental artifacts.
+Official PyTorch implementation of **DTP**. This repository is the cleaned public code release and intentionally excludes pretrained weights, benchmark outputs, and private experimental artifacts.
 
-[Framework Figure](assets/framework.pdf) [Training Code](scripts/train.py) [Inference Code](scripts/infer.py)
+[ArXiv Paper](#) [Dataset Page](https://vap.aau.dk/rellisur/) [Download Dataset](https://doi.org/10.5281/zenodo.5234969) [Framework Figure](assets/framework.pdf) [Training Code](scripts/train.py) [Inference Code](scripts/infer.py)
 
 ## :tada: News
 
@@ -117,6 +117,18 @@ Recommended environment:
 CPU inference is supported, but training is expected to run on GPU.
 
 ## :open_file_folder: Dataset Preparation
+
+Download the raw training and evaluation datasets:
+
+- [RELLISUR official page](https://vap.aau.dk/rellisur/)
+- [RELLISUR direct download (Zenodo)](https://doi.org/10.5281/zenodo.5234969)
+
+RELLISUR dataset:
+Andreas Aakerberg, Kamal Nasrollahi, Thomas B. Moeslund.
+“RELLISUR: A Real Low-Light Image Super-Resolution Dataset”.
+NeurIPS Datasets and Benchmarks 2021.
+
+According to the official dataset page, RELLISUR provides real low-light low-resolution images paired with normal-light high-resolution references. The dataset contains 12,750 paired images across different resolutions and low-light levels, and is designed to bridge low-light enhancement and image super-resolution in a unified benchmark setting.
 
 The released training script is written for the **RELLISUR** dataset layout:
 
