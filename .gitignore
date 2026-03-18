@@ -1,0 +1,95 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+*.egg
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+
+# Environments
+.env
+.venv/
+venv/
+env/
+
+# Local tooling
+.agents/
+.claude/
+.codex/
+.mcp.json
+test-write.txt
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Model artifacts
+*.pth
+*.pt
+*.onnx
+checkpoints/
+snapshots/
+logs/
+outputs/
+
+# Data and generated results
+RELLISUR/
+output_*/
+test/
+test_*/
+test1/
+draw_RGB/
+draw_RGB1/
+draw_RGB2/
+system/runs/
+
+# Research-only folders not part of the open-source release
+Ablation_study/
+baseline/
+Degenerate/
+basicsr/
+system/
+yacs/
+
+# Legacy local scripts not part of the release package
+/1.py
+/AGENTS.md
+/app.py
+/CLAUDE.md
+/Decom1.py
+/Decom.py
+/Denoise.py
+Draw_*.py
+/Enhance.py
+/LLSRNet/
+/dataloader/
+draw_*.py
+exposure_augment.py
+ipdb.py
+/logger.py
+network_visualizer.py
+profile_model.py
+test*.py
+/train.py
+/util.py
+visualize*.py
+
+# Large files
+*.pdf
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tif
+*.tiff
+!ADVANCED_FEATURES_GUIDE.md
