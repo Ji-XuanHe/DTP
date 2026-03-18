@@ -1,23 +1,27 @@
-# Dual-Path Learning based on Frequency Structural Decoupling and Regional-Aware Fusion for Low-Light Image Super-Resolution
+<div align="center">
+
+# DTP: Low-Light Image Super-Resolution
 
 ---
 
-### :tada: Accepted by ICME 2026 :tada:
+### Official PyTorch implementation of our ICME 2026 paper
 
-> **Dual-Path Learning based on Frequency Structural Decoupling and Regional-Aware Fusion for Low-Light Image Super-Resolution**  
-> Ji-Xuan He<sup>1,*</sup>, Jia-Cheng Zhao<sup>1,*</sup>, Feng-Qi Cui<sup>2,&dagger;</sup>, Jinyang Huang<sup>1,&dagger;</sup>, Yang Liu<sup>3</sup>, Sirui Zhao<sup>2</sup>, Meng Li<sup>1</sup>, Zhi Liu<sup>4</sup>
->
-> <sup>1</sup>Hefei University of Technology, Hefei, China  
-> <sup>2</sup>University of Science and Technology of China, Hefei, China  
-> <sup>3</sup>Zhejiang University, Hangzhou, China  
-> <sup>4</sup>The University of Electro-Communications, Tokyo, Japan
->
-> <sup>*</sup>Equal contribution. <sup>&dagger;</sup>Corresponding authors.  
-> Correspondence to: `jixuanhe@mail.hfut.edu.cn`, `hjy@hfut.edu.cn`
+[![Conference](https://img.shields.io/badge/Accepted%20by-ICME%202026-ff6b6b?style=flat-square)](#)
+[![Status](https://img.shields.io/badge/Status-Code%20Release-2ea44f?style=flat-square)](#)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square)](#)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?style=flat-square)](#)
 
-Official PyTorch implementation of **DTP**. This repository is the cleaned public code release and intentionally excludes pretrained weights, benchmark outputs, and private experimental artifacts.
+Code-only public release of the core DTP framework for low-light image super-resolution.
 
-[ArXiv Paper](#) [Dataset Page](https://vap.aau.dk/rellisur/) [Download Dataset](https://doi.org/10.5281/zenodo.5234969) [Framework Figure](assets/framework.pdf) [Training Code](scripts/train.py) [Inference Code](scripts/infer.py)
+Pretrained weights, datasets, benchmark outputs, and private experimental artifacts are intentionally excluded from this repository.
+
+[ArXiv Paper](#) | [Dataset Page](https://vap.aau.dk/rellisur/) | [Download Dataset](https://doi.org/10.5281/zenodo.5234969) | [Framework Figure](assets/framework.pdf) | [Training Code](scripts/train.py) | [Inference Code](scripts/infer.py)
+
+[News](#news) | [Overview](#overview) | [Framework](#framework) | [Installation](#installation) | [Training](#training) | [Inference](#inference) | [Citation](#citation)
+
+</div>
+
+<a id="news"></a>
 
 ## :tada: News
 
@@ -26,6 +30,8 @@ Official PyTorch implementation of **DTP**. This repository is the cleaned publi
 - [x] This repository has been cleaned for public open-source release.
 - [ ] Paper link / project page can be added after the public paper release.
 - [ ] Pretrained weights are not included in the current public version.
+
+<a id="overview"></a>
 
 ## :sparkles: Overview
 
@@ -37,6 +43,8 @@ The model follows a three-stage decomposition-driven design:
 2. **SDR** (`Semantics-specific Dual-path Representation`) contains two dedicated branches:
    a bio-inspired luminance enhancer and a hierarchical texture denoiser.
 3. **CSR** (`Cross-frequency Semantic Recomposition`) fuses the original input, enhanced luminance, and restored texture to reconstruct the final high-resolution output.
+
+<a id="framework"></a>
 
 ## :jigsaw: Framework
 
@@ -100,6 +108,8 @@ Not included:
 - baselines and ablation code
 - web UI and internal tooling
 
+<a id="installation"></a>
+
 ## :hammer_and_wrench: Installation
 
 ```bash
@@ -161,6 +171,8 @@ Naming assumptions in the released loader:
 - `X1` is the normal-light low-resolution supervision
 - `X2` or `X4` is the super-resolution target
 
+<a id="training"></a>
+
 ## :rocket: Training
 
 Example for `x2` super-resolution:
@@ -195,6 +207,8 @@ Checkpoint keys:
 Legacy checkpoint support:
 
 - the loader still reads the earlier internal format with `La_net`, `DES_net`, `decom_net`, and `sr_net`
+
+<a id="inference"></a>
 
 ## :mag: Inference
 
@@ -231,6 +245,8 @@ When `--save-branches` is enabled, the script also exports:
 - Pretrained weights are intentionally not included in the current public version.
 - Test-time visual results and benchmark dumps are also excluded.
 - `DTPModel.load_checkpoint()` already supports the legacy checkpoint structure if weights are released later.
+
+<a id="citation"></a>
 
 ## :books: Citation
 
