@@ -65,9 +65,6 @@ The original framework figure from the paper is shown below. Click the image to 
   <sub>Original paper figure: <a href="assets/framework.pdf">framework.pdf</a></sub>
 </div>
 
-Figure source in the LaTeX paper:
-
-- `Sec/method.tex` -> `\includegraphics[width=1.0\textwidth]{Fig/method.pdf}`
 
 ## :package: Repository Structure
 
