@@ -11,14 +11,14 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square)](#)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?style=flat-square)](#)
 
-Ji-Xuan He<sup>1,&#42;</sup>, Jia-Cheng Zhao<sup>1,&#42;</sup>, Feng-Qi Cui<sup>2,&dagger;</sup>, Jinyang Huang<sup>1,&dagger;</sup>, Yang Liu<sup>3</sup>, Sirui Zhao<sup>2</sup>, Meng Li<sup>1</sup>, Zhi Liu<sup>4</sup>
+Ji-Xuan He<sup>1,&dagger;</sup>, Jia-Cheng Zhao<sup>1,&dagger;</sup>, Feng-Qi Cui<sup>2,&#42;</sup>, Jinyang Huang<sup>1,&#42;</sup>, Yang Liu<sup>3</sup>, Sirui Zhao<sup>2</sup>, Meng Li<sup>1</sup>, Zhi Liu<sup>4</sup>
 
 <sup>1</sup>Hefei University of Technology, Hefei, China;
 <sup>2</sup>University of Science and Technology of China, Hefei, China;
 <sup>3</sup>Zhejiang University, Hangzhou, China;
 <sup>4</sup>The University of Electro-Communications, Tokyo, Japan
 
-<sup>&#42;</sup>Equal contribution. <sup>&dagger;</sup>Corresponding authors.
+<sup>&dagger;</sup>Equal contribution. <sup>&#42;</sup>Corresponding authors.
 
 [ArXiv Paper](#) | [Dataset Page](https://vap.aau.dk/rellisur/) | [Dataset Download](https://doi.org/10.5281/zenodo.5234969)
 
