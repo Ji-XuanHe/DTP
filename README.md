@@ -20,7 +20,7 @@ Ji-Xuan He<sup>1,&dagger;</sup>, Jia-Cheng Zhao<sup>1,&dagger;</sup>, Feng-Qi Cu
 
 <sup>&dagger;</sup>Equal contribution. <sup>&#42;</sup>Corresponding authors.
 
-[ArXiv Paper](#) | [Dataset Page](https://vap.aau.dk/rellisur/) | [Dataset Download](https://doi.org/10.5281/zenodo.5234969)
+[ArXiv Paper](https://arxiv.org/abs/2603.27301) | [Dataset Page](https://vap.aau.dk/rellisur/) | [Dataset Download](https://doi.org/10.5281/zenodo.5234969)
 
 [News](#news) | [Overview](#overview) | [Framework](#framework) | [Installation](#installation) | [Training](#training) | [Inference](#inference) | [Citation](#citation)
 
