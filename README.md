@@ -255,11 +255,11 @@ When `--save-branches` is enabled, the script also exports:
 If you find this repository useful, please cite our ICME 2026 paper. The final BibTeX entry can be updated after the official publication metadata becomes available.
 
 ```bibtex
-@inproceedings{dtp_icme2026,
-  title     = {To appear},
-  author    = {To appear},
-  booktitle = {IEEE International Conference on Multimedia and Expo (ICME)},
-  year      = {2026}
+@article{he2026dual,
+  title={Dual-Path Learning based on Frequency Structural Decoupling and Regional-Aware Fusion for Low-Light Image Super-Resolution},
+  author={He, Ji-Xuan and Zhao, Jia-Cheng and Cui, Feng-Qi and Huang, Jinyang and Liu, Yang and Zhao, Sirui and Li, Meng and Liu, Zhi},
+  journal={arXiv preprint arXiv:2603.27301},
+  year={2026}
 }
 ```
 
